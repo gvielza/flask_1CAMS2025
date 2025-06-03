@@ -1,10 +1,25 @@
 from flask import Flask, request, render_template
+from base_datos.conexion import Conexion
 
 app=Flask(__name__)
 
 @app.route("/")
-def hello():
-    return "Hola"
+def index():
+    return render_template("formulario.html")
+
+@app.route("/formulario", methods=['POST','GET'])
+def formulario():
+    if request.method=='POST':
+        conexion=Conexion("base_datos/base_datos.bd")
+        conexion.crear_tabla_cliente()
+        dni=request.form['dni']
+        usuario_form=request.form['usuario']
+        contrasenna=request.form['password']
+        conexion.agregar_cliente(dni, usuario_form,contrasenna)
+        clientes=conexion.mostrar_clientes()
+        conexion.cerrar_conexion()
+        return render_template("resultados.html", dni=dni, usuario=usuario_form, clientes=clientes)
+    return render_template('index.html')
 
 @app.route("/<nombre>")
 def saludo(nombre):

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resultados</title>
+</head>
+<body>
+    <h1>Página resultados</h1>
+
+    Hola {{usuario}} con dni {{dni}}:
+    <p>Su usaurio se guardó correctamente en la base de datos</p>
+<br>
+
+<h2>Lista de Clientes</h2>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>DNI</th>
+                <th>Usuario</th>
+                <th>Contraseña</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for cliente in clientes %}
+                <tr>
+                    <td>{{ cliente[0] }}</td>
+                    <td>{{ cliente[1] }}</td>
+                    <td>{{ cliente[2] }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <a href="{{url_for("index")}}">Inicio</a><br>
+
+    <a href="/">Inicio HTML</a>
+</body>
+</html>
