@@ -1,7 +1,10 @@
-from flask import Flask, request, render_template
+from flask import Flask, request, render_template, jsonify
 from base_datos.conexion import Conexion
 
+from flask_cors import CORS
+
 app=Flask(__name__)
+CORS(app)
 
 @app.route("/")
 def index():
@@ -10,7 +13,7 @@ def index():
 @app.route("/formulario", methods=['POST','GET'])
 def formulario():
     if request.method=='POST':
-        conexion=Conexion("base_datos/base_datos.bd")
+        conexion=Conexion("base_datos/base_datos.db")
         conexion.crear_tabla_cliente()
         dni=request.form['dni']
         usuario_form=request.form['usuario']
@@ -43,3 +46,23 @@ def show_the_login():
 @app.route("/form")
 def form():
     return render_template("form.html")
+
+@app.route('/api/enviar-datos', methods=['POST'])
+def recibir_datos():
+    """
+    Este endpoint espera recibir un JSON con, por ejemplo, {'nombre': '...', 'email': '...'}.
+    Luego podrías procesarlos (guardarlos en BD, enviarlos por email, etc.). 
+    Aquí simplemente devolvemos un JSON de confirmación.
+    """
+    datos = request.get_json()  
+    dni = datos.get('dni')
+    usuario = datos.get('usuario')
+    contrasenna = datos.get('contrasenna')
+    
+    mi_conexion=Conexion("base_datos/base_datos.db")
+    mi_conexion.agregar_cliente(dni,usuario,contrasenna)
+    mi_conexion.cerrar_conexion()
+    return jsonify({
+        'status': 'ok',
+        'mensaje': f'Recibido dni={dni}, usuario={usuario}'
+    }), 200
